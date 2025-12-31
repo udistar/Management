@@ -101,79 +101,62 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
             return str;
           };
 
-          // 매출계약 시트
+          // 매출계약 시트 - B열: 날짜(YYMMDD), I열: 금액
           const salesSheet = findSheet("매출계약") || findSheet("매출");
           if (salesSheet) {
             const ws = workbook.Sheets[salesSheet];
-            const data = XLSX.utils.sheet_to_json(ws);
+            const rawData = XLSX.utils.sheet_to_json(ws, { header: "A", defval: "" });
+            const headerData = XLSX.utils.sheet_to_json(ws); // 헤더 이름용
 
-            // ID에서 날짜 추출 (YYMMDD 또는 YYYYMMDD)
-            const parseDateFromId = (id: string) => {
-              if (!id) return null;
+            extractedData.sales = rawData.slice(1).map((row: any, idx: number) => {
+              // B열에서 날짜 추출 (8자리 중 앞 6자리 YYMMDD)
+              const dateStr = String(row["B"] || "").trim();
+              let date = "";
 
-              // 8자리 (YYYYMMDD) 우선 체크
-              const date8 = id.match(/^\d{8}/);
-              if (date8) {
-                const yyyy = date8[0].substring(0, 4);
-                const mm = date8[0].substring(4, 6);
-                const dd = date8[0].substring(6, 8);
-                const m = parseInt(mm);
-                const d = parseInt(dd);
-                if (m >= 1 && m <= 12 && d >= 1 && d <= 31) {
-                  return `${yyyy}-${mm}-${dd}`;
-                }
+              if (dateStr.length >= 6 && /^\d+$/.test(dateStr.substring(0, 6))) {
+                const yy = dateStr.substring(0, 2);
+                const mm = dateStr.substring(2, 4);
+                const dd = dateStr.substring(4, 6);
+                const year = parseInt(yy) > 50 ? `19${yy}` : `20${yy}`;
+                date = `${year}-${mm}-${dd}`;
+              } else {
+                date = formatDate(dateStr) || "1900-01-01";
               }
 
-              // 6자리 (YYMMDD) 체크
-              const date6 = id.match(/^\d{6}/);
-              if (date6) {
-                const yy = date6[0].substring(0, 2);
-                const mm = date6[0].substring(2, 4);
-                const dd = date6[0].substring(4, 6);
-                const m = parseInt(mm);
-                const d = parseInt(dd);
-                if (m >= 1 && m <= 12 && d >= 1 && d <= 31) {
-                  const year = parseInt(yy) > 50 ? `19${yy}` : `20${yy}`;
-                  return `${year}-${mm}-${dd}`;
-                }
-              }
-              return null;
-            };
+              // I열에서 금액 추출
+              const amount = parseFloat(String(row["I"] || "0").replace(/,/g, "")) || 0;
 
-            extractedData.sales = data.map((row: any) => {
-              const id = String(getVal(row, ["계약서번호", "계약번호", "관리번호", "id", "번호", "계약서"]) || "").trim();
-              let date = formatDate(getVal(row, ["날짜", "일자", "계약일", "등록일"]));
-
-              const extractedDate = parseDateFromId(id);
-              if (extractedDate) {
-                date = extractedDate;
-              }
+              // 헤더 데이터에서 다른 정보 가져오기
+              const headerRow = headerData[idx] || {};
 
               return {
-                id,
+                id: String(row["B"] || "").trim(),
                 date,
-                client: String(getVal(row, ["거래처명", "거래처", "고객명", "상호", "성함", "업체명"]) || "").trim(),
-                spec: String(getVal(row, ["규격", "사이즈", "품목"]) || "").trim(),
-                amount: Number(getVal(row, ["공급가액", "금액", "매출액", "합계금액"])) || 0,
+                client: String(getVal(headerRow, ["거래처명", "거래처", "고객명", "상호"]) || "").trim(),
+                spec: String(getVal(headerRow, ["규격", "사이즈", "품목"]) || "").trim(),
+                amount,
                 type: "sales",
               };
             });
           }
 
-          // 입출고현황 시트
+          // 입출고현황 시트 - I열: 운반비, M열: 상하차비
           const inoutSheet = findSheet("입출고현황") || findSheet("입출고");
           if (inoutSheet) {
             const ws = workbook.Sheets[inoutSheet];
-            const data = XLSX.utils.sheet_to_json(ws);
-            extractedData.inout = data.map((row: any) => {
-              const transportCost = Number(getVal(row, ["운반비", "화물비", "운송비", "화물트럭운반비"])) || 0;
-              const loadingCost = Number(getVal(row, ["상하차비용", "지게차상하차비", "상하차비", "상하차", "상하비", "상하차비용(M열)"])) || 0;
+            const rawData = XLSX.utils.sheet_to_json(ws, { header: "A", defval: "" });
+            const headerData = XLSX.utils.sheet_to_json(ws);
 
-              let type = String(getVal(row, ["구분", "입출구분", "입출", "유형", "상태"]) || "").trim();
-              const destination = String(getVal(row, ["도착지", "장소", "현장"]) || "").trim();
-              const departure = String(getVal(row, ["출발지"]) || "").trim();
+            extractedData.inout = rawData.slice(1).map((row: any, idx: number) => {
+              // I열: 운반비, M열: 상하차비(지게차/크레인)
+              const transportCost = parseFloat(String(row["I"] || "0").replace(/,/g, "")) || 0;
+              const loadingCost = parseFloat(String(row["M"] || "0").replace(/,/g, "")) || 0;
 
-              // 사용자 요청Fallback: 구분이 비어있으면 출발지/도착지('비제이')로 판별
+              const headerRow = headerData[idx] || {};
+              let type = String(getVal(headerRow, ["구분", "입출구분", "입출", "유형", "상태"]) || "").trim();
+              const destination = String(getVal(headerRow, ["도착지", "장소", "현장"]) || "").trim();
+              const departure = String(getVal(headerRow, ["출발지"]) || "").trim();
+
               if (!type) {
                 if (departure.includes("비제이") || departure.toLowerCase().includes("bj")) {
                   type = "출고";
@@ -182,12 +165,9 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
                 }
               }
 
-              // 타입 정규화
               if (type.includes("입")) type = "입고";
               else if (type.includes("출")) type = "출고";
 
-              // 사용자 요청 로직: 출고 시 도착지, 입고 시 출발지가 현장
-              // 단, 한쪽이 '비제이'일 경우 반대쪽을 현장으로 선택
               let location = "";
               if (type === "출고") {
                 location = (destination && destination !== "비제이") ? destination : departure;
@@ -198,28 +178,38 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
               }
 
               return {
-                date: formatDate(getVal(row, ["날짜", "일자"])),
+                date: formatDate(getVal(headerRow, ["날짜", "일자"])),
                 type: type || "미지정",
-                spec: String(getVal(row, ["규격", "사이즈", "품목"]) || "").trim(),
-                client: String(getVal(row, ["거래처명", "거래처", "상호", "고객명"]) || "").trim(),
+                spec: String(getVal(headerRow, ["규격", "사이즈", "품목"]) || "").trim(),
+                client: String(getVal(headerRow, ["거래처명", "거래처", "상호", "고객명"]) || "").trim(),
                 location: location || "미지정",
                 amount: transportCost + loadingCost,
               };
             });
           }
 
-          // 매입 시트
+          // 매입 시트 - B열: 날짜, I열: 금액
           const purchaseSheet = findSheet("매입") || findSheet("매입현황");
           if (purchaseSheet) {
             const ws = workbook.Sheets[purchaseSheet];
-            const data = XLSX.utils.sheet_to_json(ws);
-            extractedData.purchase = data.map((row: any) => ({
-              date: formatDate(getVal(row, ["날짜", "일자"])),
-              spec: String(getVal(row, ["규격", "사이즈"]) || "").trim(),
-              amount: Number(getVal(row, ["공급 총액", "공급총액", "공급가액", "금액", "매입가"])) || 0,
-              client: String(getVal(row, ["거래처명", "거래처", "상호"]) || "").trim(),
-              type: "purchase",
-            }));
+            const rawData = XLSX.utils.sheet_to_json(ws, { header: "A", defval: "" });
+            const headerData = XLSX.utils.sheet_to_json(ws);
+
+            extractedData.purchase = rawData.slice(1).map((row: any, idx: number) => {
+              // B열: 날짜, I열: 금액
+              const date = formatDate(row["B"]) || "1900-01-01";
+              const amount = parseFloat(String(row["I"] || "0").replace(/,/g, "")) || 0;
+
+              const headerRow = headerData[idx] || {};
+
+              return {
+                date,
+                spec: String(getVal(headerRow, ["규격", "사이즈"]) || "").trim(),
+                amount,
+                client: String(getVal(headerRow, ["거래처명", "거래처", "상호"]) || "").trim(),
+                type: "purchase",
+              };
+            });
           }
 
           // 임대현황 시트
