@@ -129,11 +129,11 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
     loadData();
   }, []);
 
-  // 기본값: 최근 1년, 모든 규격, 거래처 미선택
+  // 기본값: 날짜 필터 없음 (모든 데이터 표시), 모든 규격, 거래처 미선택
   const [filters, setFilters] = useState<FilterState>({
     dateRange: {
-      from: subMonths(new Date(), 12),
-      to: new Date(),
+      from: undefined,  // 날짜 필터 없음 - 모든 데이터 표시
+      to: undefined,
     },
     selectedSpecs: [],
     selectedClient: null,
