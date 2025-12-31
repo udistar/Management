@@ -108,11 +108,17 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
             const rawData = XLSX.utils.sheet_to_json(ws, { header: "A", defval: "" });
             const headerData = XLSX.utils.sheet_to_json(ws); // 헤더 이름용
 
+            console.log("Sales Sheet - First 3 raw rows:", rawData.slice(0, 3));
+
             extractedData.sales = rawData.slice(1).map((row: any, idx: number) => {
               // B열에서 날짜 추출 (8자리 중 앞 6자리 YYMMDD)
-              const dateStr = String(row["B"] || "").trim();
+              const bColValue = row["B"];
+              console.log(`Row ${idx} - B column value:`, bColValue, typeof bColValue);
+
+              const dateStr = String(bColValue || "").trim();
               let date = "";
 
+              // 숫자 형식인 경우 (8자리 또는 6자리)
               if (dateStr.length >= 6 && /^\d+$/.test(dateStr.substring(0, 6))) {
                 const yy = dateStr.substring(0, 2);
                 const mm = dateStr.substring(2, 4);
@@ -120,17 +126,18 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
                 const year = parseInt(yy) > 50 ? `19${yy}` : `20${yy}`;
                 date = `${year}-${mm}-${dd}`;
               } else {
-                date = formatDate(dateStr) || "1900-01-01";
+                // formatDate로 시도
+                date = formatDate(bColValue) || "1900-01-01";
               }
 
               // I열에서 금액 추출
               const amount = parseFloat(String(row["I"] || "0").replace(/,/g, "")) || 0;
 
-              // 헤더 데이터에서 다른 정보 가져오기
+              // 헤더 데이터에서 다른 정보 가져오기 (인덱스 보정)
               const headerRow = headerData[idx] || {};
 
               return {
-                id: String(row["B"] || "").trim(),
+                id: dateStr,
                 date,
                 client: String(getVal(headerRow, ["거래처명", "거래처", "고객명", "상호"]) || "").trim(),
                 spec: String(getVal(headerRow, ["규격", "사이즈", "품목"]) || "").trim(),
@@ -138,6 +145,8 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
                 type: "sales",
               };
             });
+
+            console.log("Extracted sales data (first 3):", extractedData.sales.slice(0, 3));
           }
 
           // 입출고현황 시트 - I열: 운반비, M열: 상하차비
