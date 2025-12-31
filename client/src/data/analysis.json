@@ -1,0 +1,64 @@
+{
+  "sales": {
+    "total_count": 1817,
+    "total_amount": 2438059176,
+    "avg_amount": 1341805,
+    "by_spec": [
+      {"name": "3 x 6", "value": 541},
+      {"name": "3 x 9", "value": 133},
+      {"name": "3x6", "value": 79},
+      {"name": "3X6", "value": 51},
+      {"name": "3 x 3", "value": 33}
+    ],
+    "avg_price_by_spec": [
+      {"name": "6x18", "value": 45000000},
+      {"name": "영동횡와수스", "value": 30000000},
+      {"name": "3x9, 4x9", "value": 19870000},
+      {"name": "3x3, 3x6", "value": 16850000},
+      {"name": "6x12", "value": 15000000}
+    ]
+  },
+  "inout": {
+    "total": 1938,
+    "out": 1120,
+    "in": 807,
+    "recent_trend": [
+      {"month": "2024-09", "count": 17},
+      {"month": "2024-10", "count": 28},
+      {"month": "2024-11", "count": 27},
+      {"month": "2024-12", "count": 22},
+      {"month": "2025-01", "count": 14}
+    ],
+    "by_spec": [
+      {"name": "3 x 6", "value": 838},
+      {"name": "3 x 9", "value": 307},
+      {"name": "3x6", "value": 192},
+      {"name": "3x9", "value": 157},
+      {"name": "3X6", "value": 85}
+    ]
+  },
+  "purchase": {
+    "total_count": 786,
+    "total_amount": 1367583167,
+    "avg_amount": 1744366,
+    "by_spec": [
+      {"name": "3 x 6", "value": 407},
+      {"name": "3 x 9", "value": 111},
+      {"name": "3x6", "value": 60},
+      {"name": "3X6", "value": 24},
+      {"name": "3x9", "value": 24}
+    ]
+  },
+  "rental": {
+    "total": 902,
+    "terminated": 667,
+    "ongoing": 235,
+    "termination_rate": 73.9
+  },
+  "financial": {
+    "revenue": 2438059176,
+    "cost": 1367583167,
+    "profit": 1070476009,
+    "margin": 78.28
+  }
+}
