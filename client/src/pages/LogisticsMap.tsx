@@ -1,8 +1,9 @@
 import DashboardLayout from "@/components/DashboardLayout";
-import { Card, CardHeader } from "@/components/ui/card";
-import { useFilter } from "@/contexts/FilterContext";
-import { useEffect, useRef, useState } from "react";
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { AlertCircle, MapPin, Navigation } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useFilter } from "@/contexts/FilterContext";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 declare global {
     interface Window {
@@ -29,6 +30,24 @@ export default function LogisticsMap() {
     const locationsRef = useRef<MapLocation[]>([]); // Listener에서 접근하기 위한 Ref
     const [clusters, setClusters] = useState<MapLocation[]>([]);
     const [isGeocoding, setIsGeocoding] = useState(false);
+
+    const contractStats = useMemo(() => {
+        const activeRentals = filteredData.rental.filter(r => r.status !== "terminated");
+        const totalActive = activeRentals.length;
+
+        const needsManagementCount = activeRentals.filter(r => r.daysLeft !== null && r.daysLeft <= 7).length;
+        const safeCount = totalActive - needsManagementCount;
+
+        const data = [
+            { name: "관리요망 (7일 이하)", value: needsManagementCount },
+            { name: "정상 진행중", value: safeCount },
+        ];
+
+        return { totalActive, needsManagementCount, safeCount, data };
+    }, [filteredData]);
+
+    const { totalActive: activeRentalCount, needsManagementCount: activeNeedsManagementCount, safeCount: activeSafeCount, data: rentalPieData } = contractStats;
+    const RENTAL_COLORS = ['#f43f5e', '#3b82f6'];
 
     // locaions 상태 동기화
     useEffect(() => {
@@ -375,6 +394,80 @@ export default function LogisticsMap() {
                                 </div>
                             </div>
                         </div>
+                    </Card>
+                </div>
+
+                {/* Contract Management Status Section */}
+                <div className="grid gap-6">
+                    <Card className="glass-panel">
+                        <CardHeader>
+                            <CardTitle>계약 관리 상태</CardTitle>
+                            <CardDescription>관리요망(7일 이하) vs 정상 계약 비율</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex flex-col lg:flex-row items-center gap-8 py-8">
+                                <div className="h-[350px] w-full lg:w-1/2 relative">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <PieChart>
+                                            <Pie
+                                                data={rentalPieData}
+                                                cx="50%"
+                                                cy="50%"
+                                                innerRadius={80}
+                                                outerRadius={120}
+                                                paddingAngle={5}
+                                                dataKey="value"
+                                                stroke="none"
+                                            >
+                                                {rentalPieData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={RENTAL_COLORS[index % RENTAL_COLORS.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip
+                                                contentStyle={{
+                                                    backgroundColor: 'rgba(20, 20, 30, 0.9)',
+                                                    backdropFilter: 'blur(10px)',
+                                                    border: '1px solid rgba(255,255,255,0.1)',
+                                                    borderRadius: '12px',
+                                                    color: '#fff'
+                                                }}
+                                            />
+                                            <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none pb-8">
+                                        <div className="text-4xl font-bold text-white">{activeRentalCount}</div>
+                                        <div className="text-xs text-muted-foreground uppercase tracking-widest">Total Active</div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full lg:w-1/2">
+                                    <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors shadow-[0_0_20px_rgba(244,63,94,0.1)]">
+                                        <CardHeader className="pb-2">
+                                            <CardTitle className="text-sm font-medium text-muted-foreground">관리요망 (7일 이하)</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className="text-4xl font-bold text-red-500">{activeNeedsManagementCount}</div>
+                                            <p className="text-xs text-muted-foreground mt-1">
+                                                전체 계약의 {activeRentalCount > 0 ? ((activeNeedsManagementCount / activeRentalCount) * 100).toFixed(1) : 0}% 차지
+                                            </p>
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-colors shadow-[0_0_20px_rgba(59,130,246,0.1)]">
+                                        <CardHeader className="pb-2">
+                                            <CardTitle className="text-sm font-medium text-muted-foreground">정상 진행중</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className="text-4xl font-bold text-blue-400">{activeSafeCount}</div>
+                                            <p className="text-xs text-muted-foreground mt-1">
+                                                전체 계약의 {activeRentalCount > 0 ? ((activeSafeCount / activeRentalCount) * 100).toFixed(1) : 0}% 차지
+                                            </p>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            </div>
+                        </CardContent>
                     </Card>
                 </div>
             </div>
