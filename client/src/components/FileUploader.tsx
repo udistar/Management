@@ -247,6 +247,7 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
                     ? "terminated"
                     : "ongoing",
                   daysLeft: isNaN(Number(daysLeftVal)) ? null : Number(daysLeftVal),
+                  latest_payment_date: formatDate(getVal(row, ["마지막", "최근", "입금", "최근입금", "마지막입금", "K"])) || null,
                 };
               })
               .filter((item): item is RentalData => item !== null);

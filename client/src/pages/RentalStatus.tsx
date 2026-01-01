@@ -151,6 +151,7 @@ export default function RentalStatus() {
                                         <th className="px-4 py-4 font-medium w-[140px]">연락처</th>
                                         <th className="px-4 py-4 font-medium w-[110px]">시작일</th>
                                         <th className="px-4 py-4 font-medium w-[110px]">종료일</th>
+                                        <th className="px-4 py-4 font-medium w-[110px]">마지막 입금일</th>
                                         <th className="px-4 py-4 font-medium text-center w-[100px]">남은기간</th>
                                     </tr>
                                 </thead>
@@ -163,6 +164,7 @@ export default function RentalStatus() {
                                             <td className="px-4 py-4 text-muted-foreground font-mono whitespace-nowrap">{item.contact || "-"}</td>
                                             <td className="px-4 py-4 text-muted-foreground font-mono whitespace-nowrap">{item.start_date || "-"}</td>
                                             <td className="px-4 py-4 text-muted-foreground font-mono whitespace-nowrap">{item.end_date || "-"}</td>
+                                            <td className="px-4 py-4 text-muted-foreground font-mono whitespace-nowrap">{item.latest_payment_date || "-"}</td>
                                             <td className="px-4 py-4 text-center whitespace-nowrap">
                                                 {item.daysLeft !== null ? (
                                                     <span className={`font-bold font-mono ${item.daysLeft < 0 ? 'text-red-500' : 'text-green-400'}`}>
@@ -174,7 +176,7 @@ export default function RentalStatus() {
                                     ))}
                                     {processedRental.length === 0 && (
                                         <tr>
-                                            <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground uppercase tracking-widest">
+                                            <td colSpan={7} className="px-6 py-12 text-center text-muted-foreground uppercase tracking-widest">
                                                 표시할 데이터가 없습니다.
                                             </td>
                                         </tr>

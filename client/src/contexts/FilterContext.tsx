@@ -39,6 +39,7 @@ export interface RentalData {
   contact: string;
   status: string;
   daysLeft: number | null;
+  latest_payment_date?: string | null;
 }
 
 interface FilterState {

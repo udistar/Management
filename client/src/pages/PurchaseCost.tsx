@@ -155,14 +155,10 @@ export default function PurchaseCost() {
                         <CardContent className="space-y-6 pt-4">
                             <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20">
                                 <p className="text-sm text-muted-foreground mb-1">총 매입액</p>
-                                <p className="text-3xl font-bold text-amber-500">{(totalAmount / 100000000).toFixed(2)}억원</p>
-                                <p className="text-xs text-muted-foreground mt-1">{(totalAmount / 10000).toLocaleString()}만원 누적</p>
+                                <p className="text-3xl font-bold text-amber-500">{totalAmount.toLocaleString()}원</p>
+                                <p className="text-xs text-muted-foreground mt-1">{(totalAmount / 100000000).toFixed(2)}억원 누적</p>
                             </div>
-                            <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20">
-                                <p className="text-sm text-muted-foreground mb-1">평균 매입단가</p>
-                                <p className="text-3xl font-bold text-blue-400">{avgAmount.toLocaleString()}원</p>
-                                <p className="text-xs text-muted-foreground mt-1">거래당 평균 금액</p>
-                            </div>
+
                             <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20">
                                 <p className="text-sm text-muted-foreground mb-1">총 매입 건수</p>
                                 <p className="text-3xl font-bold text-purple-400">{count}건</p>
