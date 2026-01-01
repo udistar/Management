@@ -107,7 +107,7 @@ export default function InOut() {
               <CardTitle className="text-xs font-semibold text-muted-foreground uppercase">총 입출고 비용</CardTitle>
             </CardHeader>
             <CardContent className="p-4 pt-0">
-              <div className="text-2xl font-bold text-yellow-400">₩{totalCost.toLocaleString()}</div>
+              <div className="text-2xl font-bold text-yellow-400">{totalCost.toLocaleString()}원</div>
               <p className="text-[10px] text-muted-foreground mt-1">화물비 + 상하차비</p>
             </CardContent>
           </Card>
@@ -296,7 +296,7 @@ export default function InOut() {
                         <td className="px-6 py-4">{item.location}</td>
                         <td className="px-6 py-4 text-muted-foreground">{item.spec}</td>
                         <td className="px-6 py-4 text-right font-mono font-bold text-yellow-500">
-                          ₩{item.amount?.toLocaleString()}
+                          {item.amount?.toLocaleString()}원
                         </td>
                       </tr>
                     ))}

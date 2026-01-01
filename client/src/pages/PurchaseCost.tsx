@@ -87,7 +87,7 @@ export default function PurchaseCost() {
                                         fontSize={12}
                                         tickLine={false}
                                         axisLine={false}
-                                        tickFormatter={(val) => `₩${val.toLocaleString()}`}
+                                        tickFormatter={(val) => `${val.toLocaleString()}원`}
                                     />
                                     <Tooltip
                                         cursor={{ fill: 'rgba(255,255,255,0.05)' }}
@@ -98,7 +98,7 @@ export default function PurchaseCost() {
                                             borderRadius: '12px',
                                             color: '#fff'
                                         }}
-                                        formatter={(value: number) => `₩${value.toLocaleString()}`}
+                                        formatter={(value: number) => `${value.toLocaleString()}원`}
                                     />
                                     <Bar dataKey="value" fill="url(#purchaseGradient)" radius={[4, 4, 0, 0]} barSize={40} />
                                 </BarChart>
@@ -155,12 +155,12 @@ export default function PurchaseCost() {
                         <CardContent className="space-y-6 pt-4">
                             <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-transparent border border-amber-500/20">
                                 <p className="text-sm text-muted-foreground mb-1">총 매입액</p>
-                                <p className="text-3xl font-bold text-amber-500">₩{(totalAmount / 100000000).toFixed(2)}억</p>
+                                <p className="text-3xl font-bold text-amber-500">{(totalAmount / 100000000).toFixed(2)}억원</p>
                                 <p className="text-xs text-muted-foreground mt-1">{(totalAmount / 10000).toLocaleString()}만원 누적</p>
                             </div>
                             <div className="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20">
                                 <p className="text-sm text-muted-foreground mb-1">평균 매입단가</p>
-                                <p className="text-3xl font-bold text-blue-400">₩{avgAmount.toLocaleString()}</p>
+                                <p className="text-3xl font-bold text-blue-400">{avgAmount.toLocaleString()}원</p>
                                 <p className="text-xs text-muted-foreground mt-1">거래당 평균 금액</p>
                             </div>
                             <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20">
@@ -220,7 +220,7 @@ export default function PurchaseCost() {
                                                 <td className="px-6 py-4 text-muted-foreground font-mono">{item.date || "-"}</td>
                                                 <td className="px-6 py-4 font-medium">{item.spec}</td>
                                                 <td className="px-6 py-4 font-bold text-white group-hover:text-primary transition-colors">{item.client}</td>
-                                                <td className="px-6 py-4 text-right font-bold text-chart-2">₩{item.amount.toLocaleString()}</td>
+                                                <td className="px-6 py-4 text-right font-bold text-chart-2">{item.amount.toLocaleString()}원</td>
                                             </tr>
                                         ))}
                                 </tbody>

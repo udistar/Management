@@ -215,7 +215,7 @@ export default function DataGrid() {
                                                 {getColumns()?.map((col) => (
                                                     <TableCell key={col.key} className="py-4 font-medium">
                                                         {col.type === "number"
-                                                            ? `₩${Number(row[col.key] || 0).toLocaleString()}`
+                                                            ? `${Number(row[col.key] || 0).toLocaleString()}원`
                                                             : String(row[col.key] || "-")}
                                                     </TableCell>
                                                 ))}

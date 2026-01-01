@@ -118,8 +118,7 @@ export default function Sales() {
                     stroke="#888"
                     fontSize={12}
                     tickLine={false}
-                    axisLine={false}
-                    tickFormatter={(val) => `₩${val.toLocaleString()}`}
+                    tickFormatter={(val) => `${val.toLocaleString()}원`}
                   />
                   <Tooltip
                     cursor={{ fill: 'rgba(255,255,255,0.05)' }}
@@ -130,7 +129,7 @@ export default function Sales() {
                       borderRadius: '12px',
                       color: '#fff'
                     }}
-                    formatter={(value: number) => `₩${value.toLocaleString()}`}
+                    formatter={(value: number) => `${value.toLocaleString()}원`}
                   />
                   <Bar dataKey="value" fill="url(#salesGradient)" radius={[4, 4, 0, 0]} barSize={40} />
                 </BarChart>
@@ -146,7 +145,7 @@ export default function Sales() {
               <CardTitle className="text-sm font-medium text-muted-foreground">총 매출액</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">₩{totalAmount.toLocaleString()}</div>
+              <div className="text-2xl font-bold text-primary">{totalAmount.toLocaleString()}원</div>
               <p className="text-[10px] text-muted-foreground mt-1">판매 계약 공급가액 합계</p>
             </CardContent>
           </Card>
@@ -157,7 +156,7 @@ export default function Sales() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-amber-500">
-                ₩{totalPurchaseAmount.toLocaleString()}
+                {totalPurchaseAmount.toLocaleString()}원
               </div>
               <p className="text-[10px] text-muted-foreground mt-1">매입 계약 합계</p>
             </CardContent>
@@ -169,7 +168,7 @@ export default function Sales() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-red-400">
-                ₩{totalTransportCost.toLocaleString()}
+                {totalTransportCost.toLocaleString()}원
               </div>
               <p className="text-[10px] text-muted-foreground mt-1">입출고 운반비 합계</p>
             </CardContent>
@@ -181,7 +180,7 @@ export default function Sales() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-chart-2">
-                ₩{(totalAmount - totalPurchaseAmount - totalTransportCost).toLocaleString()}
+                {(totalAmount - totalPurchaseAmount - totalTransportCost).toLocaleString()}원
               </div>
               <p className="text-[10px] text-muted-foreground mt-1">매출 - (매입 + 운반비)</p>
             </CardContent>
@@ -223,7 +222,7 @@ export default function Sales() {
                         <td className="px-6 py-4">{item.client}</td>
                         <td className="px-6 py-4 font-medium">{item.spec}</td>
                         <td className="px-6 py-4 text-right font-mono font-bold text-chart-2">
-                          ₩{item.amount?.toLocaleString()}
+                          {item.amount?.toLocaleString()}원
                         </td>
                       </tr>
                     ))}
@@ -247,6 +246,6 @@ export default function Sales() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </DashboardLayout >
   );
 }

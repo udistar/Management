@@ -10,12 +10,11 @@ export function normalizeSpec(spec: string): string {
   // 공백 제거 후 처리
   let normalized = spec.trim();
 
-  // 다양한 구분자를 " x "로 통일
-  // "3x6", "3X6", "3*6", "3-6" 등을 "3 x 6"으로 변환
+  // 다양한 구분자를 "x"로 통일
+  // "3x6", "3X6", "3*6", "3-6" 등을 "3x6"으로 변환
   normalized = normalized
-    .replace(/\s*[xX*\-]\s*/g, " x ")
-    .replace(/\s+/g, " ") // 중복 공백 제거
-    .trim();
+    .replace(/\s*[xX*\-]\s*/g, "x") // 구분자를 'x'로 통일
+    .replace(/\s+/g, ""); // 모든 공백 제거
 
   return normalized;
 }

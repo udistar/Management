@@ -175,7 +175,7 @@ export default function ClientAnalysis() {
               <CardTitle className="text-sm font-medium text-muted-foreground">총 매출액</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-chart-2">₩{(Math.round(stats.salesAmount / 10000)).toLocaleString()}만</div>
+              <div className="text-3xl font-bold text-chart-2">{(Math.round(stats.salesAmount / 10000)).toLocaleString()}만원</div>
               <p className="text-xs text-muted-foreground mt-1">총 매출 공급가액 합계</p>
             </CardContent>
           </Card>
@@ -223,7 +223,7 @@ export default function ClientAnalysis() {
                         borderRadius: "12px",
                         color: "#fff",
                       }}
-                      formatter={(value) => `₩${value}만`}
+                      formatter={(value) => `${value}만원`}
                     />
                     <Line
                       type="monotone"
@@ -279,7 +279,7 @@ export default function ClientAnalysis() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10">
                   <span className="text-sm text-muted-foreground">매입 총액</span>
-                  <span className="font-bold text-chart-1">₩{(stats.purchaseAmount / 100000000).toFixed(1)}억</span>
+                  <span className="font-bold text-chart-1">{(stats.purchaseAmount / 100000000).toFixed(1)}억원</span>
                 </div>
                 <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10">
                   <span className="text-sm text-muted-foreground">임대 계약</span>
@@ -327,7 +327,7 @@ export default function ClientAnalysis() {
                         </td>
                         <td className="py-2 px-2">{item.spec}</td>
                         <td className="py-2 px-2 text-right font-medium">
-                          {item.amount > 0 ? `₩${(item.amount / 10000).toLocaleString()}만` : "-"}
+                          {item.amount > 0 ? `${(item.amount / 10000).toLocaleString()}만원` : "-"}
                         </td>
                       </tr>
                     ))}

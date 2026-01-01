@@ -42,7 +42,7 @@ export default function Home() {
   const kpiCards = [
     {
       title: "총 매출액",
-      value: `₩${(stats.revenue / 100000000).toFixed(1)}억`,
+      value: `${(stats.revenue / 100000000).toFixed(1)}억원`,
       subtext: "선택 기간 누적",
       icon: DollarSign,
       trend: "up",
@@ -52,7 +52,7 @@ export default function Home() {
     },
     {
       title: "순수익",
-      value: `₩${(stats.profit / 100000000).toFixed(1)}억`,
+      value: `${(stats.profit / 100000000).toFixed(1)}억원`,
       subtext: `마진율 ${stats.margin}%`,
       icon: TrendingUp,
       trend: "up",
@@ -167,7 +167,7 @@ export default function Home() {
                         borderRadius: '12px',
                         color: '#fff'
                       }}
-                      formatter={(value: number) => `₩${value.toLocaleString()}`}
+                      formatter={(value: number) => `${value.toLocaleString()}원`}
                     />
                   </PieChart>
                 </ResponsiveContainer>

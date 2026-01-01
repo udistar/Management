@@ -35,15 +35,15 @@ export default function RentalPurchase() {
       .slice(0, 5)
       .map(([name, value]) => ({ name, value }));
 
-    return { 
+    return {
       rentalTotal, rentalTerminated, rentalOngoing, rentalData,
-      purchaseTotalAmount, purchaseAvgAmount, purchaseBySpec 
+      purchaseTotalAmount, purchaseAvgAmount, purchaseBySpec
     };
   }, [filteredData]);
 
-  const { 
+  const {
     rentalTotal, rentalTerminated, rentalOngoing, rentalData,
-    purchaseTotalAmount, purchaseAvgAmount, purchaseBySpec 
+    purchaseTotalAmount, purchaseAvgAmount, purchaseBySpec
   } = stats;
 
   const RENTAL_COLORS = ['var(--chart-5)', 'var(--chart-4)'];
@@ -90,9 +90,9 @@ export default function RentalPurchase() {
                         <Cell key={`cell-${index}`} fill={RENTAL_COLORS[index % RENTAL_COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'rgba(20, 20, 30, 0.9)', 
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'rgba(20, 20, 30, 0.9)',
                         backdropFilter: 'blur(10px)',
                         border: '1px solid rgba(255,255,255,0.1)',
                         borderRadius: '12px',
@@ -106,7 +106,7 @@ export default function RentalPurchase() {
                   <div className="text-3xl font-bold text-white">{rentalTotal}</div>
                   <div className="text-xs text-muted-foreground">Total</div>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4 mt-4">
                   <div className="bg-white/5 p-4 rounded-xl border border-white/10 text-center">
                     <div className="text-2xl font-bold text-chart-5">{rentalTerminated}</div>
@@ -146,9 +146,9 @@ export default function RentalPurchase() {
                         <Cell key={`cell-${index}`} fill={PURCHASE_COLORS[index % PURCHASE_COLORS.length]} />
                       ))}
                     </Pie>
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'rgba(20, 20, 30, 0.9)', 
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'rgba(20, 20, 30, 0.9)',
                         backdropFilter: 'blur(10px)',
                         border: '1px solid rgba(255,255,255,0.1)',
                         borderRadius: '12px',
@@ -158,15 +158,15 @@ export default function RentalPurchase() {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              
+
               <div className="bg-white/5 p-4 rounded-xl border border-white/10 mt-4 flex justify-between items-center">
                 <div>
                   <div className="text-sm text-muted-foreground">총 매입액</div>
-                  <div className="text-xl font-bold text-white">₩{(purchaseTotalAmount / 100000000).toFixed(1)}억</div>
+                  <div className="text-xl font-bold text-white">{(purchaseTotalAmount / 100000000).toFixed(1)}억원</div>
                 </div>
                 <div className="text-right">
                   <div className="text-sm text-muted-foreground">평균 매입단가</div>
-                  <div className="text-xl font-bold text-chart-2">₩{purchaseAvgAmount.toLocaleString()}</div>
+                  <div className="text-xl font-bold text-chart-2">{purchaseAvgAmount.toLocaleString()}원</div>
                 </div>
               </div>
             </CardContent>
