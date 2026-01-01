@@ -7,35 +7,38 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Database types
 export interface SalesData {
-    id?: number;
+    id?: string;
     date: string;
     spec: string;
     client: string;
     amount: number;
     transport: number;
     created_at?: string;
+    updated_at?: string;
 }
 
 export interface InOutData {
-    id?: number;
+    id?: string;
     date: string;
     spec: string;
     client: string;
     type: string;
     created_at?: string;
+    updated_at?: string;
 }
 
 export interface PurchaseData {
-    id?: number;
+    id?: string;
     date: string;
     spec: string;
     client: string;
     amount: number;
     created_at?: string;
+    updated_at?: string;
 }
 
 export interface RentalData {
-    id?: number;
+    id?: string;
     spec: string;
     client: string;
     address: string;
@@ -45,10 +48,11 @@ export interface RentalData {
     days_left: number | null;
     status: string;
     created_at?: string;
+    updated_at?: string;
 }
 
 export interface UploadMetadata {
-    id?: number;
+    id?: string;
     filename: string;
     upload_date: string;
     sales_count: number;
