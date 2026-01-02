@@ -28,7 +28,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   ];
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground selection:bg-primary selection:text-primary-foreground relative">
+    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground selection:bg-primary selection:text-primary-foreground relative" style={{ height: '100dvh' }}>
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
         <div
@@ -99,13 +99,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-hidden relative flex flex-col w-full">
+      <main className="flex-1 overflow-hidden relative flex flex-col w-full min-h-0">
         {/* Mobile Header Bar */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-white/10 md:hidden glass-panel shrink-0">
           <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(true)}>
             <Menu className="h-6 w-6" />
           </Button>
-          <div className="font-bold text-lg tracking-tight">Mbox Manager</div>
+          <div className="font-bold text-lg tracking-tight text-white">Mbox Manager</div>
           <div className="w-10" /> {/* Spacer for balance */}
         </div>
 
@@ -113,14 +113,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-primary/20 blur-[100px] pointer-events-none" />
         <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full bg-secondary/20 blur-[100px] pointer-events-none" />
 
-        <ScrollArea className="flex-1">
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
           <div className="container py-6 md:py-8 px-4 md:px-6 max-w-7xl mx-auto">
             <div className="mb-6">
               <FilterBar />
             </div>
             {children}
           </div>
-        </ScrollArea>
+        </div>
       </main>
     </div>
   );
