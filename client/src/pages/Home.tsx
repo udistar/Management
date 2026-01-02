@@ -8,7 +8,7 @@ import { useMemo } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 export default function Home() {
-  const { filteredData, assetCount, assetStats } = useFilter();
+  const { filteredData, assetCount, assetStats, isLoading } = useFilter();
 
   // 필터링된 데이터를 기반으로 KPI 계산
   const stats = useMemo(() => {
@@ -174,6 +174,14 @@ export default function Home() {
               </div>
             </CardContent>
           </Card>
+        </div>
+      </div>
+
+      {/* Data Source Indicator */}
+      <div className="mt-8 flex justify-center">
+        <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] text-muted-foreground flex items-center gap-2">
+          <div className={`w-1.5 h-1.5 rounded-full ${isLoading ? 'bg-yellow-500 animate-pulse' : 'bg-green-500'}`} />
+          {isLoading ? '데이터 동기화 중...' : (assetCount > 0 ? 'Supabase 클라우드 데이터 적용됨' : '샘플 데이터 표시 중 (파일 업로드 필요)')}
         </div>
       </div>
 

@@ -105,12 +105,12 @@ ALTER TABLE purchase_data ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rental_data ENABLE ROW LEVEL SECURITY;
 ALTER TABLE upload_metadata ENABLE ROW LEVEL SECURITY;
 
--- 7. Advanced RLS Policies
-CREATE POLICY "Public authenticated read" ON sales_data FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Public authenticated read" ON inout_data FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Public authenticated read" ON purchase_data FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Public authenticated read" ON rental_data FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Public authenticated read" ON upload_metadata FOR SELECT TO authenticated USING (true);
+-- 7. Advanced RLS Policies (모든 사용자 조회 가능하도록 수정)
+CREATE POLICY "Public read" ON sales_data FOR SELECT USING (true);
+CREATE POLICY "Public read" ON inout_data FOR SELECT USING (true);
+CREATE POLICY "Public read" ON purchase_data FOR SELECT USING (true);
+CREATE POLICY "Public read" ON rental_data FOR SELECT USING (true);
+CREATE POLICY "Public read" ON upload_metadata FOR SELECT USING (true);
 
 CREATE POLICY "Auth user CUD" ON sales_data FOR ALL TO authenticated USING (true) WITH CHECK (true);
 CREATE POLICY "Auth user CUD" ON inout_data FOR ALL TO authenticated USING (true) WITH CHECK (true);

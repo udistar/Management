@@ -115,6 +115,7 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
             // localStorage에도 백업 저장
             localStorage.setItem("dashboardData", JSON.stringify(loadedData));
             console.log('✅ Supabase 데이터 로드 완료');
+            // toast.success('데이터를 성공적으로 불러왔습니다.'); // import 누락 방지를 위해 주석 처리하거나 필요 시 추가
           } else {
             console.log('⚠️ Supabase 데이터 로드 실패, localStorage 사용');
           }
