@@ -264,34 +264,44 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
 
             // 총 자산 수량 (B2:C9) -> 0-indexed row 1-8, col 1-2
             const totalAssetsMap = new Map<string, number>();
-            for (let i = 2; i <= 8; i++) {
+            for (let i = 1; i <= 8; i++) {
               const row = rows[i];
               if (row && row[1]) {
                 const spec = String(row[1]).trim();
-                // C열만 확인 (D열은 무시)
-                const qty = parseInt(String(row[2] || "0").replace(/,/g, "")) || 0;
-                if (spec && !isNaN(qty)) totalAssetsMap.set(spec, qty);
+                // "3x12" 제외, "계" 또는 "합계" 포함 제외
+                if (spec.includes("12") || spec.includes("계") || spec.includes("합계") || !spec) continue;
+
+                // C열만 확인 (숫자 외 문자 제거)
+                const valStr = String(row[2] || "0").replace(/[^0-9]/g, "");
+                const qty = parseInt(valStr) || 0;
+                if (!isNaN(qty)) totalAssetsMap.set(spec, qty);
               }
             }
 
             // 현재 재고 수량 (B13:C18) -> 0-indexed row 12-17, col 1-2
             const inventoryMap = new Map<string, number>();
-            for (let i = 13; i <= 17; i++) {
+            for (let i = 12; i <= 17; i++) {
               const row = rows[i];
               if (row && row[1]) {
                 const spec = String(row[1]).trim();
-                const qty = parseInt(String(row[2] || "0").replace(/,/g, "")) || 0;
-                if (spec && !isNaN(qty)) inventoryMap.set(spec, qty);
+                if (spec.includes("12") || spec.includes("계") || spec.includes("합계") || !spec) continue;
+
+                const valStr = String(row[2] || "0").replace(/[^0-9]/g, "");
+                const qty = parseInt(valStr) || 0;
+                if (!isNaN(qty)) inventoryMap.set(spec, qty);
               }
             }
 
-            // 모든 규격 가져오기
+            // 모든 규격 가져오기 (사용자 요청 6개 규격 위주)
             const allAssetSpecs = new Set([...Array.from(totalAssetsMap.keys()), ...Array.from(inventoryMap.keys())]);
-            assetStats = Array.from(allAssetSpecs).map(spec => ({
-              spec,
-              total: totalAssetsMap.get(spec) || 0,
-              inventory: inventoryMap.get(spec) || 0
-            })).sort((a, b) => b.total - a.total);
+            assetStats = Array.from(allAssetSpecs)
+              .map(spec => ({
+                spec,
+                total: totalAssetsMap.get(spec) || 0,
+                inventory: inventoryMap.get(spec) || 0
+              }))
+              .filter(item => (item.total > 0 || item.inventory > 0) && !item.spec.includes("임대계"))
+              .sort((a, b) => b.total - a.total);
 
             assetCount = assetStats.reduce((sum, s) => sum + s.total, 0);
           }
