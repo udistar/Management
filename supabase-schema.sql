@@ -112,11 +112,18 @@ CREATE POLICY "Public read" ON purchase_data FOR SELECT USING (true);
 CREATE POLICY "Public read" ON rental_data FOR SELECT USING (true);
 CREATE POLICY "Public read" ON upload_metadata FOR SELECT USING (true);
 
-CREATE POLICY "Auth user CUD" ON sales_data FOR ALL TO authenticated USING (true) WITH CHECK (true);
-CREATE POLICY "Auth user CUD" ON inout_data FOR ALL TO authenticated USING (true) WITH CHECK (true);
-CREATE POLICY "Auth user CUD" ON purchase_data FOR ALL TO authenticated USING (true) WITH CHECK (true);
-CREATE POLICY "Auth user CUD" ON rental_data FOR ALL TO authenticated USING (true) WITH CHECK (true);
-CREATE POLICY "Auth user CUD" ON upload_metadata FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Public read" ON sales_data FOR SELECT USING (true);
+CREATE POLICY "Public read" ON inout_data FOR SELECT USING (true);
+CREATE POLICY "Public read" ON purchase_data FOR SELECT USING (true);
+CREATE POLICY "Public read" ON rental_data FOR SELECT USING (true);
+CREATE POLICY "Public read" ON upload_metadata FOR SELECT USING (true);
+ 
+-- 쓰기/수정/삭제 권한도 공개 (현재 인증 UI 미구현 대응)
+CREATE POLICY "Public CUD" ON sales_data FOR ALL USING (true);
+CREATE POLICY "Public CUD" ON inout_data FOR ALL USING (true);
+CREATE POLICY "Public CUD" ON purchase_data FOR ALL USING (true);
+CREATE POLICY "Public CUD" ON rental_data FOR ALL USING (true);
+CREATE POLICY "Public CUD" ON upload_metadata FOR ALL USING (true);
 
 -- 8. Storage Bucket Infrastructure
 INSERT INTO storage.buckets (id, name, public) 

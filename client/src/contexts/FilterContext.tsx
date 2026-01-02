@@ -1,6 +1,7 @@
 import defaultData from "@/data/detailed_data.json";
-import { addMonths, format, isWithinInterval, parseISO, subMonths } from "date-fns";
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { startOfMonth, subMonths, isWithinInterval, parseISO } from "date-fns";
+import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
+import { toast } from "sonner";
 import { loadDataFromSupabase, hasDataInSupabase } from "@/lib/dataService";
 
 // 데이터 타입 정의
@@ -118,6 +119,7 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
             // toast.success('데이터를 성공적으로 불러왔습니다.'); // import 누락 방지를 위해 주석 처리하거나 필요 시 추가
           } else {
             console.log('⚠️ Supabase 데이터 로드 실패, localStorage 사용');
+            toast.error('클라우드 데이터를 불러오지 못했습니다. 네트워크나 보안 설정을 확인하세요.');
           }
         } else {
           console.log('ℹ️ Supabase에 저장된 데이터가 없습니다');

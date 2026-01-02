@@ -245,17 +245,19 @@ export async function mergeData(
       purchase: mergedData.purchase || [],
       rental: mergedData.rental || [],
       assetCount: mergedData.assetCount || 0,
+      assetStats: newData.assetStats || [], // assetStats 추가
       filename: fileName,
     });
 
     if (result.success) {
       console.log('✅ Supabase 저장 완료');
+      return { success: true, data: mergedData };
     } else {
       console.warn('⚠️ Supabase 저장 실패, localStorage만 사용');
+      return { success: false, data: mergedData, error: result.error };
     }
   } catch (error) {
     console.error('❌ Supabase 저장 오류:', error);
+    return { success: false, data: mergedData, error };
   }
-
-  return mergedData;
 }

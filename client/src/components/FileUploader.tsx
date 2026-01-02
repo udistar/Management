@@ -387,26 +387,19 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
       })();
 
       // 데이터 병합 또는 교체 (Supabase 저장 포함)
-      const finalData = existingData
-        ? await mergeData(existingData, pendingData, mergeMode, pendingData.fileName)
-        : pendingData;
+      const mergeResult = await mergeData(
+        existingData || { sales: [], inout: [], purchase: [], rental: [], assetCount: 0 },
+        pendingData,
+        mergeMode,
+        pendingData.fileName
+      );
 
-      // 자산 수량은 항상 최신 업로드 파일 기준
-      if (pendingData.assetCount !== undefined) {
-        finalData.assetCount = pendingData.assetCount;
-      }
+      const finalData = mergeResult.data;
 
-      // Supabase에 저장 (mergeData에서 이미 저장되지만, replace 모드에서는 별도 저장 필요)
-      if (mergeMode === "replace") {
-        const { saveDataToSupabase } = await import("@/lib/dataService");
-        await saveDataToSupabase({
-          sales: finalData.sales || [],
-          inout: finalData.inout || [],
-          purchase: finalData.purchase || [],
-          rental: finalData.rental || [],
-          assetCount: finalData.assetCount || 0,
-          assetStats: pendingData.assetStats || [],
-          filename: pendingData.fileName,
+      // Supabase 저장 실패 시 경고 표시
+      if (!mergeResult.success) {
+        toast.warning("클라우드 저장에 실패하여 현재 브라우저에만 임시 저장되었습니다. (인터넷 연결 또는 보안 설정을 확인하세요)", {
+          duration: 6000
         });
       }
 
