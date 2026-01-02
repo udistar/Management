@@ -247,19 +247,53 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
                     ? "terminated"
                     : "ongoing",
                   daysLeft: isNaN(Number(daysLeftVal)) ? null : Number(daysLeftVal),
-                  latest_payment_date: formatDate(getVal(row, ["마지막", "최근", "입금", "최근입금", "마지막입금", "K"])) || null,
+                  latest_payment_date: formatDate(getVal(row, ["마지막", "최근", "입금", "최근입금", "마지막입금", "K"])) as string | null,
                 };
               })
-              .filter((item): item is RentalData => item !== null);
+              .filter((item): item is any => item !== null);
           }
 
           // 자산현황 시트 (New)
           let assetCount = 0;
+          let assetStats: { spec: string; total: number; inventory: number }[] = [];
           const assetSheet = findSheet("자산현황") || findSheet("자산");
           if (assetSheet) {
             const ws = workbook.Sheets[assetSheet];
-            const data = XLSX.utils.sheet_to_json(ws);
-            assetCount = data.length;
+            // header: 1로 읽어서 행렬 좌표로 데이터 추출
+            const rows: any[][] = XLSX.utils.sheet_to_json(ws, { header: 1 });
+
+            // 총 자산 수량 (B2:D9) -> 0-indexed row 1-8, col 1-3
+            const totalAssetsMap = new Map<string, number>();
+            for (let i = 2; i <= 8; i++) {
+              const row = rows[i];
+              if (row && row[1]) {
+                const spec = String(row[1]).trim();
+                // C열 또는 D열 중 숫자가 있는 것 사용
+                const qty = parseInt(String(row[2] || row[3] || "0").replace(/,/g, "")) || 0;
+                if (spec && !isNaN(qty)) totalAssetsMap.set(spec, qty);
+              }
+            }
+
+            // 현재 재고 수량 (B13:C18) -> 0-indexed row 12-17, col 1-2
+            const inventoryMap = new Map<string, number>();
+            for (let i = 13; i <= 17; i++) {
+              const row = rows[i];
+              if (row && row[1]) {
+                const spec = String(row[1]).trim();
+                const qty = parseInt(String(row[2] || "0").replace(/,/g, "")) || 0;
+                if (spec && !isNaN(qty)) inventoryMap.set(spec, qty);
+              }
+            }
+
+            // 모든 규격 가져오기
+            const allAssetSpecs = new Set([...Array.from(totalAssetsMap.keys()), ...Array.from(inventoryMap.keys())]);
+            assetStats = Array.from(allAssetSpecs).map(spec => ({
+              spec,
+              total: totalAssetsMap.get(spec) || 0,
+              inventory: inventoryMap.get(spec) || 0
+            })).sort((a, b) => b.total - a.total);
+
+            assetCount = assetStats.reduce((sum, s) => sum + s.total, 0);
           }
 
           // 규격 추출 및 정제
@@ -297,6 +331,7 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
             purchaseCount: cleanedData.purchase.length,
             rentalCount: cleanedData.rental.length,
             assetCount: assetCount,
+            assetStats: assetStats,
           });
           setValidationErrors(errors);
           setCleaningCorrections(correctionSummary);
@@ -360,6 +395,7 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
           purchase: finalData.purchase || [],
           rental: finalData.rental || [],
           assetCount: finalData.assetCount || 0,
+          assetStats: pendingData.assetStats || [],
           filename: pendingData.fileName,
         });
       }

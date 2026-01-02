@@ -177,6 +177,7 @@ export default function FilterBar() {
               }));
             }}
             className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition"
+            title="거래처 선택 해제"
           >
             <X className="h-4 w-4" />
           </button>
@@ -214,6 +215,7 @@ export default function FilterBar() {
             <button
               onClick={() => toggleSpec(spec)}
               className="hover:opacity-70 transition"
+              title={`${spec} 필터 제거`}
             >
               <X className="h-3 w-3" />
             </button>

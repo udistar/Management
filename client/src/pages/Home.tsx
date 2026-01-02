@@ -8,36 +8,27 @@ import { useMemo } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
 export default function Home() {
-  const { filteredData, assetCount } = useFilter();
+  const { filteredData, assetCount, assetStats } = useFilter();
 
   // 필터링된 데이터를 기반으로 KPI 계산
   const stats = useMemo(() => {
     const revenue = filteredData.sales.reduce((sum, item) => sum + item.amount, 0);
-    const cost = filteredData.purchase.reduce((sum, item) => sum + item.amount, 0);
-    const profit = revenue - cost;
+    const purchaseCost = filteredData.purchase.reduce((sum, item) => sum + item.amount, 0);
+    const inoutCost = filteredData.inout.reduce((sum, item) => sum + item.amount, 0);
+
+    // 순수익 = 매출 - 매입비용 - 입출고비용(운반비+상하차비)
+    const profit = revenue - purchaseCost - inoutCost;
     const margin = revenue > 0 ? ((profit / revenue) * 100).toFixed(2) : "0.00";
 
     const totalInOut = filteredData.inout.length;
 
-    const totalRental = filteredData.rental.length;
-    const ongoingRental = filteredData.rental.filter(r => r.status === "ongoing").length;
+    // 임대 가동률: (총 자산 - 현재 재고) / 총 자산 * 100
+    const totalInventory = assetStats.reduce((sum, s) => sum + s.inventory, 0);
+    const activeRentalCount = assetCount - totalInventory;
+    const rentalRate = assetCount > 0 ? ((activeRentalCount / assetCount) * 100).toFixed(1) : "0.0";
 
-    // 분모를 자산 수량(assetCount)으로 변경. assetCount가 0이면 0.0 표시
-    const rentalRate = assetCount > 0 ? ((ongoingRental / assetCount) * 100).toFixed(1) : "0.0";
-
-    // 규격별 판매량 집계
-    const specCounts: Record<string, number> = {};
-    filteredData.sales.forEach(item => {
-      specCounts[item.spec] = (specCounts[item.spec] || 0) + 1;
-    });
-
-    const topSpecs = Object.entries(specCounts)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 5)
-      .map(([name, value]) => ({ name, value }));
-
-    return { revenue, cost, profit, margin, totalInOut, rentalRate, topSpecs };
-  }, [filteredData, assetCount]);
+    return { revenue, purchaseCost, inoutCost, profit, margin, totalInOut, rentalRate, activeRentalCount, totalInventory };
+  }, [filteredData, assetCount, assetStats]);
 
   const kpiCards = [
     {
@@ -53,7 +44,7 @@ export default function Home() {
     {
       title: "순수익",
       value: `${(stats.profit / 100000000).toFixed(1)}억원`,
-      subtext: `마진율 ${stats.margin}%`,
+      subtext: `매입·운반비 제외 마진 ${stats.margin}%`,
       icon: TrendingUp,
       trend: "up",
       color: "text-chart-4",
@@ -63,7 +54,7 @@ export default function Home() {
     {
       title: "총 입출고",
       value: `${stats.totalInOut.toLocaleString()}건`,
-      subtext: "활발한 물류 이동",
+      subtext: `운반/상하차비 합계 ${(stats.inoutCost / 10000).toLocaleString()}만원`,
       icon: Package,
       trend: "neutral",
       color: "text-chart-2",
@@ -73,9 +64,9 @@ export default function Home() {
     {
       title: "임대 가동률",
       value: `${stats.rentalRate}%`,
-      subtext: "현재 진행중인 계약",
+      subtext: `자산 ${assetCount} / 재고 ${stats.totalInventory}`,
       icon: Users,
-      trend: "down",
+      trend: "neutral",
       color: "text-chart-3",
       bg: "bg-chart-3/10",
       border: "border-chart-3/20"
@@ -84,7 +75,7 @@ export default function Home() {
 
   const pieData = [
     { name: "매출", value: stats.revenue },
-    { name: "비용", value: stats.cost },
+    { name: "비용", value: stats.purchaseCost + stats.inoutCost },
   ];
 
   const COLORS = ['var(--chart-1)', 'var(--chart-5)'];
@@ -134,82 +125,50 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-          {/* Revenue vs Cost Chart */}
-          <Card className="glass-panel col-span-4">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
+          {/* Inventory by Spec */}
+          <Card className="glass-panel col-span-5">
             <CardHeader>
-              <CardTitle>수익 구조 분석</CardTitle>
-              <CardDescription>매출 대비 비용 및 순수익 비율</CardDescription>
-            </CardHeader>
-            <CardContent className="pl-2">
-              <div className="h-[300px] w-full flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={pieData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={80}
-                      outerRadius={110}
-                      paddingAngle={5}
-                      dataKey="value"
-                      stroke="none"
-                    >
-                      {pieData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: 'rgba(20, 20, 30, 0.8)',
-                        backdropFilter: 'blur(10px)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: '12px',
-                        color: '#fff'
-                      }}
-                      formatter={(value: number) => `${value.toLocaleString()}원`}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="absolute text-center">
-                  <div className="text-3xl font-bold text-primary">{stats.margin}%</div>
-                  <div className="text-xs text-muted-foreground uppercase tracking-widest">Margin</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Top Products */}
-          <Card className="glass-panel col-span-3">
-            <CardHeader>
-              <CardTitle>주력 규격 Top 5</CardTitle>
-              <CardDescription>매출 기여도가 가장 높은 규격</CardDescription>
+              <CardTitle>규격별 재고 현황</CardTitle>
+              <CardDescription>보유 자산 대비 현재 재고(미임대) 수량</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
-                {stats.topSpecs.length > 0 ? (
-                  stats.topSpecs.map((item, index) => (
-                    <div key={index} className="flex items-center group">
-                      <div className="w-12 text-sm font-medium text-muted-foreground group-hover:text-white transition-colors">
-                        {index + 1}위
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium">{item.name}</span>
-                          <span className="text-sm text-muted-foreground">{item.value}건</span>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {assetStats.length > 0 ? (
+                  assetStats.map((item, index) => (
+                    <div key={index} className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="font-bold text-lg">{item.spec}</span>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-2xl font-bold text-primary">{item.inventory}</span>
+                          <span className="text-xs text-muted-foreground">/ {item.total}대</span>
                         </div>
-                        <div className="h-2 w-full bg-secondary/30 rounded-full overflow-hidden">
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-[10px] uppercase tracking-wider text-muted-foreground">
+                          <span>임대 가동 중 ({item.total - item.inventory})</span>
+                          <span>재고 ({item.inventory})</span>
+                        </div>
+                        <div className="h-2 w-full bg-secondary/30 rounded-full overflow-hidden flex">
                           <div
-                            className="h-full bg-gradient-to-r from-primary to-chart-2 rounded-full transition-all duration-1000 ease-out"
-                            style={{ width: `${(item.value / stats.topSpecs[0].value) * 100}%` }}
+                            className="h-full bg-primary transition-all duration-1000"
+                            style={{ width: `${item.total > 0 ? ((item.total - item.inventory) / item.total) * 100 : 0}%` }}
                           />
+                          <div
+                            className="h-full bg-chart-5/40 transition-all duration-1000"
+                            style={{ width: `${item.total > 0 ? (item.inventory / item.total) * 100 : 0}%` }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-xs font-medium">
+                          <span className="text-primary">{item.total > 0 ? Math.round(((item.total - item.inventory) / item.total) * 100) : 0}% 가동</span>
+                          <span className="text-muted-foreground">{item.inventory}대 남음</span>
                         </div>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="flex items-center justify-center h-full text-muted-foreground">
-                    데이터가 없습니다.
+                  <div className="col-span-full flex items-center justify-center p-12 text-muted-foreground">
+                    자산 데이터가 없습니다. 파일을 업로드해 주세요.
                   </div>
                 )}
               </div>

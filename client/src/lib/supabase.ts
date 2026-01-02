@@ -60,5 +60,6 @@ export interface UploadMetadata {
     purchase_count: number;
     rental_count: number;
     asset_count: number;
+    asset_stats?: any[];
     created_at?: string;
 }

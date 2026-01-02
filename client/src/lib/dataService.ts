@@ -10,6 +10,7 @@ export async function saveDataToSupabase(data: {
     purchase: any[];
     rental: any[];
     assetCount: number;
+    assetStats: any[];
     filename: string;
 }) {
     try {
@@ -97,6 +98,7 @@ export async function saveDataToSupabase(data: {
             purchase_count: data.purchase.length,
             rental_count: data.rental.length,
             asset_count: data.assetCount || 0,
+            asset_stats: data.assetStats || [],
         };
 
         const { error: metadataError } = await supabase
@@ -207,6 +209,9 @@ export async function loadDataFromSupabase() {
                 purchase,
                 rental,
                 assetCount,
+                assetStats: metadataData && metadataData.length > 0
+                    ? metadataData[0].asset_stats
+                    : [],
             },
         };
     } catch (error) {

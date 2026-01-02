@@ -57,6 +57,7 @@ interface FilterContextType {
   availableSpecs: string[];
   availableClients: string[];
   assetCount: number;
+  assetStats: { spec: string; total: number; inventory: number }[];
   filteredData: {
     sales: SalesData[];
     inout: InOutData[];
@@ -143,6 +144,7 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
   const availableSpecs = detailedData.specs || [];
   const availableClients = detailedData.clients || [];
   const assetCount = detailedData.assetCount || 0;
+  const assetStats = detailedData.assetStats || [];
 
   const filteredData = useMemo(() => {
     const { from, to } = filters.dateRange;
@@ -209,6 +211,7 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
         availableSpecs: availableSpecs || [],
         availableClients: availableClients || [],
         assetCount,
+        assetStats,
         filteredData,
         resetFilters,
         isLoading,
