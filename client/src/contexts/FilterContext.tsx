@@ -180,9 +180,22 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
       sales: ((detailedData.sales || []) as SalesData[]).filter(
         (item) => checkDate(item.date) && checkSpec(item.spec) && checkClient(item.client)
       ),
-      inout: ((detailedData.inout || []) as InOutData[]).filter(
-        (item) => checkDate(item.date) && checkSpec(item.spec) && checkClient(item.client)
-      ),
+      inout: ((detailedData.inout || []) as InOutData[]).filter((item) => {
+        // 입출고 현황은 현재 달의 전달(전월)까지만 반영
+        const now = new Date();
+        const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        try {
+          const itemDate = parseISO(item.date);
+          return (
+            itemDate < startOfThisMonth &&
+            checkDate(item.date) &&
+            checkSpec(item.spec) &&
+            checkClient(item.client)
+          );
+        } catch (e) {
+          return false;
+        }
+      }),
       purchase: ((detailedData.purchase || []) as PurchaseData[]).filter(
         (item) => checkDate(item.date) && checkSpec(item.spec) && checkClient(item.client)
       ),

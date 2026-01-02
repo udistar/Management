@@ -262,14 +262,14 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
             // header: 1로 읽어서 행렬 좌표로 데이터 추출
             const rows: any[][] = XLSX.utils.sheet_to_json(ws, { header: 1 });
 
-            // 총 자산 수량 (B2:D9) -> 0-indexed row 1-8, col 1-3
+            // 총 자산 수량 (B2:C9) -> 0-indexed row 1-8, col 1-2
             const totalAssetsMap = new Map<string, number>();
             for (let i = 2; i <= 8; i++) {
               const row = rows[i];
               if (row && row[1]) {
                 const spec = String(row[1]).trim();
-                // C열 또는 D열 중 숫자가 있는 것 사용
-                const qty = parseInt(String(row[2] || row[3] || "0").replace(/,/g, "")) || 0;
+                // C열만 확인 (D열은 무시)
+                const qty = parseInt(String(row[2] || "0").replace(/,/g, "")) || 0;
                 if (spec && !isNaN(qty)) totalAssetsMap.set(spec, qty);
               }
             }
