@@ -92,14 +92,14 @@ export default function Home() {
   return (
     <DashboardLayout>
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-glow mb-2">종합 관리 대시보드</h1>
-            <p className="text-muted-foreground text-lg">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-glow mb-2">종합 관리 대시보드</h1>
+            <p className="text-muted-foreground text-sm md:text-lg">
               실시간 데이터 분석 및 주요 지표 모니터링
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <ExportButton dataType="sales" label="매출 다운로드" />
             <ExportButton dataType="inout" label="입출고 다운로드" />
           </div>

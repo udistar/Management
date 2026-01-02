@@ -140,8 +140,8 @@ export default function DataGrid() {
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                     <div>
-                        <h1 className="text-4xl font-bold tracking-tight text-glow mb-2">데이터 그리드</h1>
-                        <p className="text-muted-foreground text-lg">
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-glow mb-2">데이터 그리드</h1>
+                        <p className="text-muted-foreground text-sm md:text-lg">
                             원본 데이터를 검색하고 정렬하여 상세하게 분석합니다.
                         </p>
                     </div>

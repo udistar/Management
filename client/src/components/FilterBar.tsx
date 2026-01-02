@@ -45,7 +45,7 @@ export default function FilterBar() {
         <Filter className="h-4 w-4" />
         <span>필터</span>
       </div>
-      
+
       <Separator orientation="vertical" className="h-6 bg-white/10" />
 
       {/* Date Range Picker */}
@@ -54,7 +54,7 @@ export default function FilterBar() {
           <Button
             variant={"outline"}
             className={cn(
-              "w-[240px] justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10",
+              "w-full md:w-[240px] justify-start text-left font-normal bg-white/5 border-white/10 hover:bg-white/10",
               !filters.dateRange.from && "text-muted-foreground"
             )}
           >
@@ -95,7 +95,7 @@ export default function FilterBar() {
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="w-[140px] justify-between bg-white/5 border-white/10 hover:bg-white/10"
+            className="w-full md:w-[140px] justify-between bg-white/5 border-white/10 hover:bg-white/10"
           >
             <span className="truncate">
               {filters.selectedSpecs.length > 0
@@ -152,7 +152,7 @@ export default function FilterBar() {
       </Popover>
 
       {/* Client Search Input with Suggestions */}
-      <div className="relative w-[280px]">
+      <div className="relative w-full md:w-[280px]">
         <input
           type="text"
           placeholder="거래처 검색..."

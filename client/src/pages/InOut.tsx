@@ -63,10 +63,10 @@ export default function InOut() {
   return (
     <DashboardLayout>
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-glow mb-2">입출고 현황</h1>
-            <p className="text-muted-foreground text-lg">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-glow mb-2">입출고 현황</h1>
+            <p className="text-muted-foreground text-sm md:text-lg">
               월별 물류 이동 추이 및 규격별 입출고 분석
             </p>
           </div>

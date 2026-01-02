@@ -321,7 +321,7 @@ export default function LogisticsMap() {
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 h-full flex flex-col">
                 <div className="flex items-start justify-between">
                     <div>
-                        <h1 className="text-4xl font-bold tracking-tight text-glow mb-2">물류 지도</h1>
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-glow mb-2">물류 지도</h1>
                         <p className="text-muted-foreground text-lg">
                             전국 임대 현장 및 자산 배치 현황
                         </p>
@@ -344,7 +344,7 @@ export default function LogisticsMap() {
                     </div>
                 </div>
 
-                <div className="grid gap-6 flex-1 min-h-[600px]">
+                <div className="grid gap-6 flex-1 aspect-square md:min-h-[600px]">
                     <Card className="glass-panel border-white/10 overflow-hidden relative group">
                         <CardHeader className="absolute top-0 left-0 z-10 p-4 w-full pointer-events-none">
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-xs font-medium text-white pointer-events-auto">
