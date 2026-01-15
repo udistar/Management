@@ -92,11 +92,22 @@ export default function FileUploader({ onUploadSuccess }: FileUploaderProps) {
               }
             }
 
-            // 문자열인 경우 yyyy-mm-dd 형식으로 변환 시도
-            const str = String(val).trim();
-            if (/^\d{4}-\d{2}-\d{2}/.test(str)) return str.substring(0, 10);
-            if (/^\d{8}/.test(str)) return `${str.substring(0, 4)}-${str.substring(4, 6)}-${str.substring(6, 8)}`;
-            if (/^\d{4}\.\d{2}\.\d{2}/.test(str)) return str.replace(/\./g, "-");
+            // 문자열인 경우 처리
+            let str = String(val).trim().replace(/\s/g, "");
+
+            // 1. YYYY-MM-DD, YYYY.MM.DD, YYYYMMDD 등 (4자리 연도)
+            const y4Match = str.match(/^(\d{4})[./-]?(\d{2})[./-]?(\d{2})/);
+            if (y4Match) {
+              return `${y4Match[1]}-${y4Match[2]}-${y4Match[3]}`;
+            }
+
+            // 2. YY.MM.DD, YY-MM-DD, YYMMDD 등 (2자리 연도)
+            const y2Match = str.match(/^(\d{2})[./-]?(\d{2})[./-]?(\d{2})/);
+            if (y2Match) {
+              const year = parseInt(y2Match[1]);
+              const fullYear = year < 70 ? `20${y2Match[1]}` : `19${y2Match[1]}`;
+              return `${fullYear}-${y2Match[2]}-${y2Match[3]}`;
+            }
 
             return str;
           };

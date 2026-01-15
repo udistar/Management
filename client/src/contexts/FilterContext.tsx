@@ -138,7 +138,7 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFilters] = useState<FilterState>({
     dateRange: {
       from: subMonths(new Date(), 12),
-      to: new Date(),
+      to: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0), // 당월 말일
     },
     selectedSpecs: [],
     selectedClient: null,
@@ -183,22 +183,12 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
       sales: ((detailedData.sales || []) as SalesData[]).filter(
         (item) => checkDate(item.date) && checkSpec(item.spec) && checkClient(item.client)
       ),
-      inout: ((detailedData.inout || []) as InOutData[]).filter((item) => {
-        // 입출고 현황은 현재 달의 전달(전월)까지만 반영
-        const now = new Date();
-        const startOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        try {
-          const itemDate = parseISO(item.date);
-          return (
-            itemDate < startOfThisMonth &&
-            checkDate(item.date) &&
-            checkSpec(item.spec) &&
-            checkClient(item.client)
-          );
-        } catch (e) {
-          return false;
-        }
-      }),
+      inout: ((detailedData.inout || []) as InOutData[]).filter(
+        (item) =>
+          checkDate(item.date) &&
+          checkSpec(item.spec) &&
+          checkClient(item.client)
+      ),
       purchase: ((detailedData.purchase || []) as PurchaseData[]).filter(
         (item) => checkDate(item.date) && checkSpec(item.spec) && checkClient(item.client)
       ),
@@ -212,7 +202,7 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
     setFilters({
       dateRange: {
         from: subMonths(new Date(), 12),
-        to: new Date(),
+        to: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0), // 당월 말일
       },
       selectedSpecs: [],
       selectedClient: null,
