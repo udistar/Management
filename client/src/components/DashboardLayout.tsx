@@ -3,8 +3,10 @@ import FilterBar from "@/components/FilterBar";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
-import { BarChart3, Database, Home, LayoutDashboard, MapPin, Menu, PieChart, Settings, TrendingUp, Users, X } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { BarChart3, Database, Home, LayoutDashboard, LogOut, MapPin, Menu, PieChart, Settings, TrendingUp, Users, X } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Link, useLocation } from "wouter";
 
 interface DashboardLayoutProps {
@@ -15,6 +17,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [location] = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { email, signOut } = useAuth();
+  const showSidebarLabels = isSidebarOpen || isMobileMenuOpen;
+
+  const handleSignOut = () => {
+    void signOut().catch(() => {
+      toast.error("로그아웃하지 못했어요. 다시 시도해 주세요.");
+    });
+  };
 
   const navItems = [
     { icon: Home, label: "개요", path: "/" },
@@ -49,7 +59,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="flex h-16 items-center justify-between px-3 border-b border-white/10 shrink-0">
           <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
             <LayoutDashboard className="h-6 w-6 text-primary animate-pulse" />
-            {(isSidebarOpen || isMobileMenuOpen) && <span className="bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent italic">Mbox</span>}
+            {showSidebarLabels && <span className="bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent italic">Mbox</span>}
           </div>
           {isMobileMenuOpen ? (
             <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(false)}>
@@ -75,7 +85,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   )}
                 >
                   <item.icon className="h-5 w-5 shrink-0" />
-                  {(isSidebarOpen || isMobileMenuOpen) && <span>{item.label}</span>}
+                  {showSidebarLabels && <span>{item.label}</span>}
                 </Button>
               </Link>
             ))}
@@ -87,6 +97,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <FileUploader />
           </div>
           {!isSidebarOpen && <div className="hidden md:block"><FileUploader /></div>}
+          {showSidebarLabels && email && (
+            <p className="truncate px-1 text-xs text-muted-foreground" title={email}>
+              {email}
+            </p>
+          )}
+          <Button
+            variant="ghost"
+            size={showSidebarLabels ? "default" : "icon"}
+            className={cn(
+              "w-full hover:bg-white/10 text-muted-foreground",
+              showSidebarLabels && "justify-start gap-3"
+            )}
+            onClick={handleSignOut}
+          >
+            <LogOut className="h-5 w-5 shrink-0" />
+            {showSidebarLabels && <span>로그아웃</span>}
+          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -106,7 +133,9 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <Menu className="h-6 w-6" />
           </Button>
           <div className="font-bold text-lg tracking-tight text-white">Mbox Manager</div>
-          <div className="w-10" /> {/* Spacer for balance */}
+          <Button variant="ghost" size="icon" onClick={handleSignOut} aria-label="로그아웃">
+            <LogOut className="h-5 w-5" />
+          </Button>
         </div>
 
         {/* Ambient Light Orbs */}
