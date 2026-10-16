@@ -1,6 +1,8 @@
 import { supabase } from './supabase';
 import type { SalesData, InOutData, PurchaseData, RentalData, UploadMetadata } from './supabase';
 
+// 로그인된 세션 JWT는 이 클라이언트의 모든 요청에 자동으로 붙습니다.
+
 /**
  * Supabase에 모든 데이터를 저장합니다
  */

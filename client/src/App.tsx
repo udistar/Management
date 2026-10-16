@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AuthGate } from "@/contexts/AuthContext";
 import { FilterProvider } from "@/contexts/FilterContext";
 import ClientAnalysis from "@/pages/ClientAnalysis";
 import DataGrid from "@/pages/DataGrid";
@@ -45,12 +46,14 @@ function App() {
         defaultTheme="dark"
       // switchable
       >
-        <FilterProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
-        </FilterProvider>
+        <TooltipProvider>
+          <Toaster />
+          <AuthGate>
+            <FilterProvider>
+              <Router />
+            </FilterProvider>
+          </AuthGate>
+        </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );
