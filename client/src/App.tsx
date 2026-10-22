@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthGate } from "@/contexts/AuthContext";
 import { FilterProvider } from "@/contexts/FilterContext";
+import CallStatus from "@/pages/CallStatus";
 import ClientAnalysis from "@/pages/ClientAnalysis";
 import DataGrid from "@/pages/DataGrid";
 import InOut from "@/pages/InOut";
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/logistics-map" component={LogisticsMap} />
       <Route path="/client-analysis" component={ClientAnalysis} />
       <Route path="/data-grid" component={DataGrid} />
+      <Route path="/call-status" component={CallStatus} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

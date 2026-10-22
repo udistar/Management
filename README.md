@@ -59,3 +59,21 @@ http://127.0.0.1:3000/**
 4. Gmail에서 메일을 열고 링크를 누릅니다.
 
 메일이 오지 않으면 스팸함, Authentication → Email, 그리고 기본 메일 발송 한도(커스텀 SMTP가 없으면 시간당 발송이 매우 적습니다)를 확인하세요.
+
+## 통화 처리 현황 화면 (`/call-status`, 2026-10-22)
+
+로그인한 관리자만 보는 화면이에요. 통화마다 카드 한 장(시각 KST, 가린 번호·업체, 분류 견적·문의·내부·미분류, 요약 한 줄, 원본 견적 금액이 있을 때만 금액, 담당, 상태 대기·진행·보내 대기·완료, 녹음→요약→담당→상태 단계)으로 보여 주고, 오늘·이번 주 필터가 있어요. 1분마다 다시 불러와요.
+
+데이터: Supabase `public.call_status` (RLS: 관리자 이메일 로그인만 읽기). 메인PC ERP(`mbox-erp`)가 통화 meta.json을 저장할 때마다 `popbill_sandbox/call_status_sync.py`가 요약만 올려요. 녹음·녹취 전문·전체 번호는 올리지 않아요.
+
+쓰기는 토큰이 맞을 때만 되는 함수로만 해요 (`call_status_upsert`, `call_status_set`). 토큰은 메인PC `mbox-erp/.env`의 `CALL_STATUS_TOKEN`에만 있어요(DB에는 sha256만).
+
+담당 봇 상태 갱신(메인PC `C:\Users\udist\mbox-erp`에서):
+
+```
+python -m popbill_sandbox.call_status_sync --set <call_id> 진행 --by 경영실장 --note "견적서 작성 중"
+python -m popbill_sandbox.call_status_sync --set <call_id> "보내 대기" --by 경영실장
+python -m popbill_sandbox.call_status_sync --set <call_id> 완료 --by 경영실장
+```
+
+담당 봇이 한 번 상태를 바꾸면 ERP가 같은 통화를 다시 저장해도 상태를 되돌리지 않아요.

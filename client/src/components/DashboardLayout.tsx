@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-import { BarChart3, Database, Home, LayoutDashboard, LogOut, MapPin, Menu, PieChart, Settings, TrendingUp, Users, X } from "lucide-react";
+import { BarChart3, Database, Home, LayoutDashboard, LogOut, MapPin, Menu, Phone, PieChart, Settings, TrendingUp, Users, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Link, useLocation } from "wouter";
@@ -35,6 +35,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { icon: MapPin, label: "물류 지도", path: "/logistics-map" },
     { icon: Users, label: "거래처 분석", path: "/client-analysis" },
     { icon: Database, label: "데이터 그리드", path: "/data-grid" },
+    { icon: Phone, label: "통화 처리 현황", path: "/call-status" },
   ];
 
   return (
