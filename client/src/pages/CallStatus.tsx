@@ -103,7 +103,6 @@ export default function CallStatus() {
     add("link", { rel: "manifest", href: "/call-status.webmanifest" });
     add("link", { rel: "apple-touch-icon", sizes: "180x180", href: "/call-status-apple-touch-icon.png" });
     add("meta", { name: "apple-mobile-web-app-title", content: "통화현황" });
-    add("meta", { name: "apple-mobile-web-app-capable", content: "yes" });
     add("meta", { name: "theme-color", content: "#122652" });
     const prevTitle = document.title;
     document.title = "통화현황";

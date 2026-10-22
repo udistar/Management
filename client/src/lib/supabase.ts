@@ -51,6 +51,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
         detectSessionInUrl: true,
         persistSession: true,
         autoRefreshToken: true,
+        // ERP 전체가 같은 세션(localStorage 기본 키)을 공유. 리프레시 토큰으로 자동 연장.
+        storage: typeof window !== 'undefined' ? window.localStorage : undefined,
         flowType: 'implicit',
     },
 });

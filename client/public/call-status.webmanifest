@@ -2,8 +2,8 @@
   "name": "통화현황",
   "short_name": "통화현황",
   "start_url": "/call-status",
-  "scope": "/call-status",
-  "display": "standalone",
+  "scope": "/",
+  "display": "browser",
   "background_color": "#122652",
   "theme_color": "#122652",
   "icons": [

@@ -28,6 +28,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const navItems = [
     { icon: Home, label: "개요", path: "/" },
+    { icon: Phone, label: "통화 처리 현황", path: "/call-status" },
     { icon: TrendingUp, label: "매출 분석", path: "/sales" },
     { icon: BarChart3, label: "입출고 현황", path: "/inout" },
     { icon: PieChart, label: "임대 현황", path: "/rental-status" },
@@ -35,7 +36,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { icon: MapPin, label: "물류 지도", path: "/logistics-map" },
     { icon: Users, label: "거래처 분석", path: "/client-analysis" },
     { icon: Database, label: "데이터 그리드", path: "/data-grid" },
-    { icon: Phone, label: "통화 처리 현황", path: "/call-status" },
+  ];
+
+  const mobileTabs = [
+    { icon: Home, label: "개요", path: "/" },
+    { icon: Phone, label: "통화현황", path: "/call-status" },
+    { icon: PieChart, label: "임대", path: "/rental-status" },
+    { icon: TrendingUp, label: "매출", path: "/sales" },
   ];
 
   return (
@@ -151,6 +158,25 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             {children}
           </div>
         </div>
+
+        {/* Mobile Bottom Tabs */}
+        <nav className="md:hidden glass-panel shrink-0 border-t border-white/10 grid grid-cols-5" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
+          {mobileTabs.map((tab) => (
+            <Link key={tab.path} href={tab.path}>
+              <div className={cn(
+                "flex flex-col items-center justify-center gap-1 py-2 text-[11px]",
+                location === tab.path ? "text-primary font-semibold" : "text-muted-foreground"
+              )}>
+                <tab.icon className="h-5 w-5" />
+                <span>{tab.label}</span>
+              </div>
+            </Link>
+          ))}
+          <button type="button" onClick={() => setIsMobileMenuOpen(true)} className="flex flex-col items-center justify-center gap-1 py-2 text-[11px] text-muted-foreground">
+            <Menu className="h-5 w-5" />
+            <span>전체</span>
+          </button>
+        </nav>
       </main>
     </div>
   );
