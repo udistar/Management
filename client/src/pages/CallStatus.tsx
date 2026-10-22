@@ -119,12 +119,7 @@ export default function CallStatus() {
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
-    const { data, error } = await supabase
-      .from("call_status")
-      .select("*")
-      .gte("called_at", rangeStart(range).toISOString())
-      .order("called_at", { ascending: false })
-      .limit(300);
+    const { data, error } = await supabase.rpc("call_status_public_list", { p_since: rangeStart(range).toISOString() });
     if (error) setError("통화 현황을 불러오지 못했어요. 잠시 뒤 다시 시도해 주세요.");
     setRows((data as CallRow[]) ?? []);
     setLoading(false);

@@ -3,6 +3,7 @@ import { supabase } from "@/lib/supabase";
 import LoginPage, { AuthScreen } from "@/pages/Login";
 import type { Session } from "@supabase/supabase-js";
 import { Loader2 } from "lucide-react";
+import { useLocation } from "wouter";
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 type AuthStatus = "loading" | "unauthenticated" | "authenticated";
@@ -25,6 +26,7 @@ export function useAuth() {
 }
 
 export function AuthGate({ children }: { children: React.ReactNode }) {
+  const [location] = useLocation();
   const [status, setStatus] = useState<AuthStatus>("loading");
   const [email, setEmail] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -97,6 +99,15 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
           로그인 상태를 확인하고 있어요…
         </div>
       </AuthScreen>
+    );
+  }
+
+  // /call-status만 로그인 없이 읽기 전용 공개 (무도사 승인 10/22). 다른 화면은 로그인 필요.
+  if (status !== "authenticated" && location === "/call-status") {
+    return (
+      <AuthContext.Provider value={{ email: null, signOut }}>
+        {children}
+      </AuthContext.Provider>
     );
   }
 
