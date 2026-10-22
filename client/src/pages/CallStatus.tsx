@@ -91,6 +91,27 @@ function Steps({ row }: { row: CallRow }) {
 }
 
 export default function CallStatus() {
+  // 홈 화면 바로가기용 아이콘·manifest (이 화면에서만 붙이고, 떠날 때 원래대로)
+  useEffect(() => {
+    const added: Element[] = [];
+    const add = (tag: string, attrs: Record<string, string>) => {
+      const el = document.createElement(tag);
+      Object.entries(attrs).forEach(([k, v]) => el.setAttribute(k, v));
+      document.head.appendChild(el);
+      added.push(el);
+    };
+    add("link", { rel: "manifest", href: "/call-status.webmanifest" });
+    add("link", { rel: "apple-touch-icon", sizes: "180x180", href: "/call-status-apple-touch-icon.png" });
+    add("meta", { name: "apple-mobile-web-app-title", content: "통화현황" });
+    add("meta", { name: "apple-mobile-web-app-capable", content: "yes" });
+    add("meta", { name: "theme-color", content: "#122652" });
+    const prevTitle = document.title;
+    document.title = "통화현황";
+    return () => {
+      added.forEach((el) => el.remove());
+      document.title = prevTitle;
+    };
+  }, []);
   const [range, setRange] = useState<Range>("today");
   const [rows, setRows] = useState<CallRow[]>([]);
   const [loading, setLoading] = useState(true);
