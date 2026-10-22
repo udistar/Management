@@ -145,7 +145,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           <div className="container py-6 md:py-8 px-4 md:px-6 max-w-7xl mx-auto">
-            <div className="mb-6">
+            <div className={cn("mb-6", location === "/call-status" && "hidden md:block")}>
               <FilterBar />
             </div>
             {children}
