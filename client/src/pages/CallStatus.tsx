@@ -7,6 +7,7 @@ interface CallRow {
   call_id: string;
   called_at: string | null;
   phone_masked: string | null;
+  phone?: string | null;
   company: string | null;
   category: "견적" | "문의" | "내부" | "미분류" | null;
   summary: string | null;
@@ -198,10 +199,10 @@ export default function CallStatus() {
                 <div className="min-w-0">
                   <div className="text-base text-zinc-400">{fmtKst(r.called_at)}</div>
                   <div className="text-xl sm:text-2xl font-bold break-keep">{r.company || "업체 미확인"}</div>
-                  {r.phone_masked && (
+                  {(r.phone || r.phone_masked) && (
                     <div className="flex items-center gap-1 text-lg text-zinc-300">
                       <Phone className="h-4 w-4" />
-                      {r.phone_masked}
+                      {r.phone || r.phone_masked}
                     </div>
                   )}
                 </div>
