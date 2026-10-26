@@ -102,15 +102,6 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // /call-status만 로그인 없이 읽기 전용 공개 (무도사 승인 10/22). 다른 화면은 로그인 필요.
-  if (status !== "authenticated" && location === "/call-status") {
-    return (
-      <AuthContext.Provider value={{ email: null, signOut }}>
-        {children}
-      </AuthContext.Provider>
-    );
-  }
-
   if (status !== "authenticated") {
     return <LoginPage notice={notice} />;
   }

@@ -1,4 +1,7 @@
-import defaultData from "@/data/detailed_data.json";
+import { supabase } from "@/lib/supabase";
+
+// Ledger data is no longer bundled; it is read from Supabase after login (2026-10-26 security fix).
+const defaultData: any = { sales: [], inout: [], purchase: [], rental: [], specs: [], clients: [] };
 import { startOfMonth, subMonths, isWithinInterval, parseISO } from "date-fns";
 import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from "react";
 import { toast } from "sonner";
@@ -122,6 +125,13 @@ export function FilterProvider({ children }: { children: React.ReactNode }) {
             toast.error('클라우드 데이터를 불러오지 못했습니다. 네트워크나 보안 설정을 확인하세요.');
           }
         } else {
+          const { data: snap, error: snapErr } = await supabase.rpc('erp_snapshot_get');
+          if (!snapErr && snap) {
+            setDetailedData(snap);
+            localStorage.setItem("dashboardData", JSON.stringify(snap));
+          } else if (snapErr) {
+            console.error('snapshot load error', snapErr);
+          }
           console.log('ℹ️ Supabase에 저장된 데이터가 없습니다');
         }
       } catch (error) {
