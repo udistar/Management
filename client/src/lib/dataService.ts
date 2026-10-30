@@ -16,11 +16,33 @@ export async function saveDataToSupabase(data: {
     filename: string;
 }) {
     try {
-        // 기존 데이터 삭제 (전체 교체 방식)
-        await supabase.from('sales_data').delete().not('id', 'is', null);
-        await supabase.from('inout_data').delete().not('id', 'is', null);
-        await supabase.from('purchase_data').delete().not('id', 'is', null);
-        await supabase.from('rental_data').delete().not('id', 'is', null);
+        // 빈 페이로드면 전체 삭제 금지 (공백 테이블 사고 방지)
+        const totalRows =
+            (data.sales?.length || 0) +
+            (data.inout?.length || 0) +
+            (data.purchase?.length || 0) +
+            (data.rental?.length || 0);
+        if (totalRows === 0) {
+            return { success: false, error: 'empty payload' };
+        }
+
+        // 기존 데이터 삭제 (전체 교체 방식) — 삭제 실패 시 insert 전에 중단
+        {
+            const { error } = await supabase.from('sales_data').delete().not('id', 'is', null);
+            if (error) throw error;
+        }
+        {
+            const { error } = await supabase.from('inout_data').delete().not('id', 'is', null);
+            if (error) throw error;
+        }
+        {
+            const { error } = await supabase.from('purchase_data').delete().not('id', 'is', null);
+            if (error) throw error;
+        }
+        {
+            const { error } = await supabase.from('rental_data').delete().not('id', 'is', null);
+            if (error) throw error;
+        }
 
         // 1. Sales 데이터 저장
         if (data.sales.length > 0) {

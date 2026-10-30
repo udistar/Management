@@ -105,25 +105,50 @@ ALTER TABLE purchase_data ENABLE ROW LEVEL SECURITY;
 ALTER TABLE rental_data ENABLE ROW LEVEL SECURITY;
 ALTER TABLE upload_metadata ENABLE ROW LEVEL SECURITY;
 
--- 7. Advanced RLS Policies (모든 사용자 조회 가능하도록 수정)
-CREATE POLICY "Public read" ON sales_data FOR SELECT USING (true);
-CREATE POLICY "Public read" ON inout_data FOR SELECT USING (true);
-CREATE POLICY "Public read" ON purchase_data FOR SELECT USING (true);
-CREATE POLICY "Public read" ON rental_data FOR SELECT USING (true);
-CREATE POLICY "Public read" ON upload_metadata FOR SELECT USING (true);
+-- 7. RLS Policies (라이브와 동일: 소유자 이메일 authenticated만 — 2026-10-16 이후)
+-- 절대 Public CUD / Public read(USING true)를 다시 넣지 마세요.
+DROP POLICY IF EXISTS "Public read" ON sales_data;
+DROP POLICY IF EXISTS "Public read" ON inout_data;
+DROP POLICY IF EXISTS "Public read" ON purchase_data;
+DROP POLICY IF EXISTS "Public read" ON rental_data;
+DROP POLICY IF EXISTS "Public read" ON upload_metadata;
+DROP POLICY IF EXISTS "Public CUD" ON sales_data;
+DROP POLICY IF EXISTS "Public CUD" ON inout_data;
+DROP POLICY IF EXISTS "Public CUD" ON purchase_data;
+DROP POLICY IF EXISTS "Public CUD" ON rental_data;
+DROP POLICY IF EXISTS "Public CUD" ON upload_metadata;
+DROP POLICY IF EXISTS "owner all" ON sales_data;
+DROP POLICY IF EXISTS "owner all" ON inout_data;
+DROP POLICY IF EXISTS "owner all" ON purchase_data;
+DROP POLICY IF EXISTS "owner all" ON rental_data;
+DROP POLICY IF EXISTS "owner all" ON upload_metadata;
 
-CREATE POLICY "Public read" ON sales_data FOR SELECT USING (true);
-CREATE POLICY "Public read" ON inout_data FOR SELECT USING (true);
-CREATE POLICY "Public read" ON purchase_data FOR SELECT USING (true);
-CREATE POLICY "Public read" ON rental_data FOR SELECT USING (true);
-CREATE POLICY "Public read" ON upload_metadata FOR SELECT USING (true);
- 
--- 쓰기/수정/삭제 권한도 공개 (현재 인증 UI 미구현 대응)
-CREATE POLICY "Public CUD" ON sales_data FOR ALL USING (true);
-CREATE POLICY "Public CUD" ON inout_data FOR ALL USING (true);
-CREATE POLICY "Public CUD" ON purchase_data FOR ALL USING (true);
-CREATE POLICY "Public CUD" ON rental_data FOR ALL USING (true);
-CREATE POLICY "Public CUD" ON upload_metadata FOR ALL USING (true);
+REVOKE ALL ON TABLE sales_data FROM anon, public;
+REVOKE ALL ON TABLE inout_data FROM anon, public;
+REVOKE ALL ON TABLE purchase_data FROM anon, public;
+REVOKE ALL ON TABLE rental_data FROM anon, public;
+REVOKE ALL ON TABLE upload_metadata FROM anon, public;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE sales_data TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE inout_data TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE purchase_data TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE rental_data TO authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE upload_metadata TO authenticated;
+
+CREATE POLICY "owner all" ON sales_data FOR ALL TO authenticated
+  USING (lower(COALESCE(auth.jwt()->>'email','')) = '01042870788sm@gmail.com')
+  WITH CHECK (lower(COALESCE(auth.jwt()->>'email','')) = '01042870788sm@gmail.com');
+CREATE POLICY "owner all" ON inout_data FOR ALL TO authenticated
+  USING (lower(COALESCE(auth.jwt()->>'email','')) = '01042870788sm@gmail.com')
+  WITH CHECK (lower(COALESCE(auth.jwt()->>'email','')) = '01042870788sm@gmail.com');
+CREATE POLICY "owner all" ON purchase_data FOR ALL TO authenticated
+  USING (lower(COALESCE(auth.jwt()->>'email','')) = '01042870788sm@gmail.com')
+  WITH CHECK (lower(COALESCE(auth.jwt()->>'email','')) = '01042870788sm@gmail.com');
+CREATE POLICY "owner all" ON rental_data FOR ALL TO authenticated
+  USING (lower(COALESCE(auth.jwt()->>'email','')) = '01042870788sm@gmail.com')
+  WITH CHECK (lower(COALESCE(auth.jwt()->>'email','')) = '01042870788sm@gmail.com');
+CREATE POLICY "owner all" ON upload_metadata FOR ALL TO authenticated
+  USING (lower(COALESCE(auth.jwt()->>'email','')) = '01042870788sm@gmail.com')
+  WITH CHECK (lower(COALESCE(auth.jwt()->>'email','')) = '01042870788sm@gmail.com');
 
 -- 8. Storage Bucket Infrastructure
 INSERT INTO storage.buckets (id, name, public) 
