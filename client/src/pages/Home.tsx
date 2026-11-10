@@ -1,5 +1,6 @@
 import DashboardLayout from "@/components/DashboardLayout";
 import ExportButton from "@/components/ExportButton";
+import HomepageVisitsCard from "@/components/HomepageVisitsCard";
 import UploadHistory from "@/components/UploadHistory";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useFilter } from "@/contexts/FilterContext";
@@ -124,6 +125,8 @@ export default function Home() {
             </Card>
           ))}
         </div>
+
+        <HomepageVisitsCard />
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-5">
           {/* Inventory by Spec */}
